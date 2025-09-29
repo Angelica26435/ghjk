@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio de sesión</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 60px; }
+    .campo { display: flex; justify-content: center; align-items: center; margin: 10px 0; }
+    input[type="text"], input[type="password"] {
+      padding: 8px;
+      width: 220px;
+      font-size: 14px;
+    }
+    .checkbox-label {
+      margin-left: 10px;
+      font-size: 14px;
+    }
+    button { padding: 10px 20px; margin-top: 10px; }
+    .error { color: red; margin-top: 10px; }
+    .ok { color: green; margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>🔐 Iniciar sesión</h2>
+  <form id="login-form">
+    <div class="campo">
+      <input type="text" id="usuario" placeholder="Usuario" required>
+    </div>
+    <div class="input-wrapper">
+  <label for="clave">Contraseña</label><br>
+  <div class="input-container">
+  <input type="password" id="clave" placeholder="••••••" required>
+  <i class="fa fa-eye eye-icon" onclick="togglePassword('clave', this)"></i>
+</div>
+</div>
+    <button type="submit">Entrar</button>
+  </form>
+  <div id="mensaje-login" class="error"></div>
+
+  <div style="margin-top: 30px;">
+    <button onclick="window.location.href='/cambiar.html'">🔄 Cambiar contraseña</button>
+  </div>
+</body>
+
+<script>
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const usuario = document.getElementById("usuario").value;
+    const clave = document.getElementById("clave").value;
+
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario, clave })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      window.location.href = "/index.html";
+    } else {
+      document.getElementById("mensaje-login").textContent = "Credenciales incorrectas";
+    }
+  });
+</script>
+</html>
